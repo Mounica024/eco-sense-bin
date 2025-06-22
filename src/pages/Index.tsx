@@ -22,51 +22,13 @@ import SensorCard from "@/components/SensorCard";
 import WasteChart from "@/components/WasteChart";
 import BinMap from "@/components/BinMap";
 import CollectionSchedule from "@/components/CollectionSchedule";
+import RealTimeToggle from "@/components/RealTimeToggle";
+import { useRealTimeData } from "@/hooks/useRealTimeData";
 
 const Index = () => {
-  const binData = [
-    {
-      id: 1,
-      location: "Campus Main Gate",
-      fillLevel: 85,
-      wasteType: "Mixed",
-      lastCollection: "2 hours ago",
-      status: "needs-collection",
-      sensors: {
-        weight: 12.5,
-        moisture: 45,
-        temperature: 24
-      }
-    },
-    {
-      id: 2,
-      location: "Library Entrance",
-      fillLevel: 32,
-      wasteType: "Paper",
-      lastCollection: "1 day ago",
-      status: "normal",
-      sensors: {
-        weight: 4.2,
-        moisture: 12,
-        temperature: 23
-      }
-    },
-    {
-      id: 3,
-      location: "Cafeteria",
-      fillLevel: 67,
-      wasteType: "Organic",
-      lastCollection: "4 hours ago",
-      status: "normal",
-      sensors: {
-        weight: 8.9,
-        moisture: 68,
-        temperature: 26
-      }
-    }
-  ];
+  const { binData, isRealTimeEnabled, toggleRealTime } = useRealTimeData();
 
-  const totalWasteCollected = 245.7;
+  const totalWasteCollected = binData.reduce((sum, bin) => sum + bin.sensors.weight, 0);
   const recyclingRate = 78;
   const carbonSaved = 156.3;
 
@@ -84,6 +46,14 @@ const Index = () => {
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Real-time monitoring and management of IoT-enabled smart recycling bins
           </p>
+          
+          {/* Real-time Toggle */}
+          <div className="flex justify-center mt-6">
+            <RealTimeToggle 
+              isEnabled={isRealTimeEnabled} 
+              onToggle={toggleRealTime} 
+            />
+          </div>
         </div>
 
         {/* Key Metrics */}
@@ -93,7 +63,7 @@ const Index = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-green-100 text-sm font-medium">Total Waste Collected</p>
-                  <p className="text-3xl font-bold">{totalWasteCollected} kg</p>
+                  <p className="text-3xl font-bold">{totalWasteCollected.toFixed(1)} kg</p>
                 </div>
                 <Trash2 className="h-8 w-8 text-green-100" />
               </div>
